@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'color_form_field.dart';
 import 'game.dart';
 
 void main() {
@@ -40,6 +41,7 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<int> _guess = [-1,-1,-1,-1];
 
     return Scaffold(
       appBar: AppBar(
@@ -50,48 +52,56 @@ class MyHomePage extends StatelessWidget {
         child: Form(
         key: _formKey,
         child: Column(
-
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Consumer<Game>(
               builder: (context, codeProvider, child) {
-                return Text('${codeProvider.message}');
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: codeProvider.guessList,
+                );
               },
             ),
-            TextFormField(
-              controller: myController,
-              // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+              ColorFormField(onSaved: (value) {
+              _guess[0] = value;
+            },),
+              ColorFormField(onSaved: (value) {
+                _guess[1] = value;
+              }),
+              ColorFormField(onSaved: (value) {
+                _guess[2] = value;
+              }),
+              ColorFormField(onSaved: (value) {
+                _guess[3] = value;
+              }),],),
             ElevatedButton(
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
+                  _formKey.currentState.save();
+                  Set checkSet = Set.from(_guess);
+                  if (checkSet.length == _guess.length) {
+                    // no duplicates
+                    Provider.of<Game>(context, listen: false).addGuess(_guess);
+                  }
+                  else
                   ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('Checking solution...')));
-                  List<int> guess = myController.text.split(",").map((e) => int.parse(e)).toList();
-                  Provider.of<Game>(context, listen: false).addGuess(guess);
+                      .showSnackBar(SnackBar(content: Text('The solution cannot contain duplicates')));
+                  //List<int> guess = myController.text.split(",").map((e) => int.parse(e)).toList();
+
                 }
               },
-              child: Text('Submit'),
+              child: Text('Check'),
             ),
-
           ],
         ),
       )
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => startNewGame(context),
-        tooltip: 'Start New Game',
-        child: Icon(Icons.loop),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+
     );
   }
 }

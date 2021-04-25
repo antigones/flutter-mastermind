@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 class Game extends ChangeNotifier {
   List<int> codeColours = [0,1,2,3,4,5,6,7,8,9];
   List<int> _answer = [];
-  List<List<int>> _guessList = [];
+  List<Widget> _guessList = [];
   String _message="";
-
   String get message => _message;
+  List<Widget> get guessList => _guessList;
+
+  Game() {
+    this.startGame();
+  }
 
   List<int> _checkGuess(List<int> guess) {
     int matches = 0;
@@ -39,15 +43,20 @@ class Game extends ChangeNotifier {
 
   void addGuess(List<int> guess) {
       List<int> matches_perms = _checkGuess(guess);
-      _guessList.add(guess);
-      print(_guessList);
+
       if (checkWin(matches_perms[0])) {
-        _message = "You won";
+        _message = "You won!";
       }
       else
         {
           _message = "Matches: "+matches_perms[0].toString()+"; Perms: "+matches_perms[1].toString();
         }
+      _guessList.add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(guess.toString()+" "+_message)
+        ],
+      ));
       notifyListeners();
   }
 
