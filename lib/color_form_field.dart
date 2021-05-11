@@ -35,16 +35,6 @@ class ColorFormField extends FormField<int> {
                   ),
                 ],
               );
-              InkWell(
-                child: Container(
-                    margin: const EdgeInsets.all(15.0),
-                    padding: const EdgeInsets.all(20.0),
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.black)),
-                    child: Text(state.value.toString())),
-                onTap: () {
-                  state.didChange((state.value + 1) % 10);
-                },
-              );
+
             });
 }

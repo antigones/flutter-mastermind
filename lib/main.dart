@@ -48,6 +48,7 @@ class MyHomePage extends StatelessWidget {
         title: Text(_title),
       ),
       body: Center(
+      child:SingleChildScrollView(
 
         child: Form(
         key: _formKey,
@@ -63,6 +64,7 @@ class MyHomePage extends StatelessWidget {
                 );
               },
             ),
+            SizedBox(height: 30,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -78,6 +80,7 @@ class MyHomePage extends StatelessWidget {
               ColorFormField(onSaved: (value) {
                 _guess[3] = value;
               }),],),
+            SizedBox(height: 20,),
             ElevatedButton(
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
@@ -100,6 +103,15 @@ class MyHomePage extends StatelessWidget {
           ],
         ),
       )
+      )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _formKey.currentState?.reset();
+          Provider.of<Game>(context, listen: false).startGame();
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('New Game Started!')));
+        },
+        child: const Icon(Icons.replay)
       ),
 
     );
